@@ -1,0 +1,128 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>CSS Drop Down Menus</title>
+
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: "Trebuchet MS", Helvetica, Sans-Serif;
+	font-size: 14px;
+}
+
+a {
+	text-decoration: none;
+	color: #838383;
+}
+
+a:hover {
+	color: black;
+}
+
+#menu {
+	position: relative;
+	margin-left: 30px;
+}
+
+#menu a {
+	display: block;
+	width: 140px;
+}
+
+#menu ul {
+	list-style-type: none;
+	padding-top: 5px;
+}
+
+#menu li {
+	float: left;
+	position: relative;
+	padding: 3px 0;
+	text-align: center;
+}
+
+#menu ul.sub-menu {
+	display: none;
+	position: absolute;
+	top: 20px;
+	left: -10px;
+	padding: 10px;
+	z-index: 90;
+}
+
+#menu ul.sub-menu li {
+	text-align: left;
+}
+
+#menu li:hover ul.sub-menu {
+	display: block;
+	border: 1px solid #ececec;
+}
+</style>
+
+</head>
+<body>
+
+<div id="menu">
+	<ul>
+	   <li><a href="${pageContext.request.contextPath}/home">Home</a></li>
+		<li><a href="addCourse">Courses</a>
+
+		<ul class="sub-menu">
+			<li><a href="addCourse">Add</a></li>
+			<li><a href="updateCourse">Update</a></li>
+			<li><a href="deleteCourse">Delete</a></li>
+			
+		</ul>
+
+		</li>
+
+		<li><a href="addTrainer">Trainers</a>
+
+		<ul class="sub-menu">
+			<li><a href="addTrainer">Add</a></li>
+			<li><a href="updateTrainer">Update</a></li>
+			<li><a href="deleteTrainer">Delete</a></li>
+		</ul>
+
+		</li>
+  
+     <!-- <li><a href="#">Calendar</a> -->  
+       
+       <li><a href="newCalendar">Calendar</a>
+
+		<ul class="sub-menu">
+			<li><a href="newCalendar">Add</a></li>
+			<li><a href="batchAssign">Assign Courses</a></li>
+	    </ul>
+
+		</li>
+     
+     
+		<li><a href="dashboard">Dashboard</a></li>
+		
+		<li><a href="monthlychart">Visual Analysis</a>
+		<ul class="sub-menu">
+			<li><a href="monthlychart">Monthly</a></li>
+			<li><a href="selectcourse">Yearly</a></li>
+		</ul>
+		</li>
+		
+        <li><a href="contactus">Contact Us</a>
+		<ul class="sub-menu">			
+			<li><a href="contactus">Use Our Contact Form</a></li>
+			<li><a href="download/internal">Download File - Internal to project</a></li>
+			<li><a href="download/external">Download File - External to project</a></li>
+		</ul>
+
+		</li>
+	</ul>
+</div>
+
+</body>
+</html>
