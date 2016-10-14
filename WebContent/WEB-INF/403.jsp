@@ -9,10 +9,9 @@
 <body>
 
 <h1 align="center" style="color: red"> Access Denied 403 </h1>
-
+<h1 align="center" style="color: red"> Username : ${username}  </h1>
 <h1 align="center"> You does not have authority to access this page </h1>
-
-<h1 align="center"> You need Admin_Role to access this page</h1>
+<h1 align="center"> You need ROLE_ADMIN to access this page</h1>
 
 </body>
 </html>

@@ -64,7 +64,7 @@ public class LoginController {
 			System.out.println(userDetail);
 			model.addObject("username", userDetail.getUsername());
 		}
-		model.setViewName("403403");
+		model.setViewName("403");
 		return model;
 	}
 
