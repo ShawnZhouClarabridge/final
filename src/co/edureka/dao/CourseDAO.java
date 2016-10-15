@@ -17,80 +17,81 @@ import co.edureka.controller.Courses;
 
 @Component("courseDAO")
 public class CourseDAO {
-	
-private NamedParameterJdbcTemplate jdbc;
+    private static final String SQL_COUNT = "select count(*) from courses where id = :id";
+    private NamedParameterJdbcTemplate jdbc;
 
-	
-	@Autowired
-	public void setDataSource(DataSource jdbc){
-		this.jdbc=new NamedParameterJdbcTemplate(jdbc);
-		
-	}	
+    @Autowired
+    public void setDataSource(DataSource jdbc) {
+        this.jdbc = new NamedParameterJdbcTemplate(jdbc);
+    }
+
+    public boolean courseExists(Courses courses) {
+        SqlParameterSource param = new MapSqlParameterSource("id",courses.getId());
+        int cnt = jdbc.queryForInt(SQL_COUNT,param);
+        return cnt !=0;
+    }
+
+    public void insertCourse(Courses course) {
+        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(course);
+        jdbc.update("insert into courses(id,name,price,sessions) values (:id,:name,:price,:sessions) ", params);
+    }
+
+    public void deleteCourse(String courseName) {
+
+        String sql = "delete from courses where name=:courseName ";
+        SqlParameterSource param = new MapSqlParameterSource("courseName", courseName);
+        System.out.println(sql);
+        jdbc.update(sql, param);
+    }
+
+    public void updateCourse(Courses course, String courseName) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
+        params.addValue("name", course.getName());
+        params.addValue("id", course.getId());
+        params.addValue("price", course.getPrice());
+        params.addValue("old", courseName);
+
+        String sql = "update courses set name=:name , id=:id ,price=:price where name=:old ";
+        System.out.println(sql);
+        jdbc.update(sql, params);
+    }
 
 
-	public void insertCourse(Courses course) {	
-		BeanPropertySqlParameterSource params=new BeanPropertySqlParameterSource(course);
-		jdbc.update("insert into courses(id,name,price) values (:id,:name,:price) ", params);		
-	}
-	
-	public void deleteCourse(String courseName) {	
-				
-		String sql="delete from courses where name=:courseName ";		
-		SqlParameterSource param=new MapSqlParameterSource("courseName",courseName);
-		System.out.println(sql);
-		jdbc.update(sql, param);   	
-	}
-	
-	public void updateCourse(Courses course,String courseName){
-		
-		MapSqlParameterSource params=new MapSqlParameterSource();
-		
-		params.addValue("name",course.getName());params.addValue("id",course.getId());
-		params.addValue("price",course.getPrice());params.addValue("old",courseName);		
-		
-		String sql="update courses set name=:name , id=:id ,price=:price where name=:old ";
-		System.out.println(sql);
-		jdbc.update(sql, params);
-	}
+    public List<Courses> getCourses() {
+        return jdbc.query("select * from courses", new RowMapper<Courses>() {
 
+            public Courses mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Courses course = new Courses();
 
-	public List<Courses> getCourses() {
-		
-		
-		return jdbc.query("select * from courses", new RowMapper<Courses>() {
+                course.setId(rs.getString("id"));
+                course.setName(rs.getString("name"));
+                course.setPrice(rs.getInt("price"));
+                return course;
+            }
+        });
+    }
 
-			public Courses mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Courses course = new Courses();
+    public Courses getCourse(String name) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("name", name);
 
-				course.setId(rs.getString("id"));
-				course.setName(rs.getString("name"));
-				course.setPrice(rs.getInt("price"));
-				return course;
-			}
-		});
-	}
-		
-		
-		public Courses getCourse (String name){
-			
-			MapSqlParameterSource params = new MapSqlParameterSource();
-			params.addValue("name",name);
+        return (Courses) jdbc.queryForObject("select * from courses where name=:name", params,
+                new RowMapper<Courses>() {
 
-			return (Courses) jdbc.queryForObject("select * from courses where name=:name", params,
-					new RowMapper<Courses>() {
+                    public Courses mapRow(ResultSet rs, int rowNum)
+                            throws SQLException {
+                        Courses course = new Courses();
 
-						public Courses mapRow(ResultSet rs, int rowNum)
-								throws SQLException {
-							Courses course = new Courses();
+                        course.setId(rs.getString("id"));
+                        course.setName(rs.getString("name"));
+                        course.setPrice(rs.getInt("price"));
 
-							course.setId(rs.getString("id"));
-							course.setName(rs.getString("name"));
-							course.setPrice(rs.getInt("price"));
-							
-							return course;
-						}
+                        return course;
+                    }
 
-					});			
-		}
-		
+                });
+    }
+
 }

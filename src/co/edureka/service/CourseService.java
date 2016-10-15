@@ -10,35 +10,39 @@ import co.edureka.dao.CourseDAO;
 
 @Service("courseService")
 public class CourseService {
-	
-	private CourseDAO courseDao;
-	
-	@Autowired 
-	public void setCourseDao(CourseDAO courseDao){
-		this.courseDao=courseDao;
-	}
-	
 
-	public void insertCourse(Courses course) {
-		
-		courseDao.insertCourse(course);
-		
-	}
+    private CourseDAO courseDao;
 
-	public void deleteCourse(String courseName){
-		courseDao.deleteCourse(courseName);
-	}
-	
-	public void updateCourse(Courses course,String courseName){
-		courseDao.updateCourse(course,courseName);
-	}
-	
-	public List<Courses> getCourses(){
-		return courseDao.getCourses();
-	}
-	
-	public Courses getCourse(String name){
-		return courseDao.getCourse(name);
-	}
-	
+    @Autowired
+    public void setCourseDao(CourseDAO courseDao) {
+        this.courseDao = courseDao;
+    }
+
+    public boolean courseExists(Courses courses) {
+        return courseDao.courseExists(courses);
+    }
+
+
+    public void insertCourse(Courses course) {
+
+        courseDao.insertCourse(course);
+
+    }
+
+    public void deleteCourse(String courseName) {
+        courseDao.deleteCourse(courseName);
+    }
+
+    public void updateCourse(Courses course, String courseName) {
+        courseDao.updateCourse(course, courseName);
+    }
+
+    public List<Courses> getCourses() {
+        return courseDao.getCourses();
+    }
+
+    public Courses getCourse(String name) {
+        return courseDao.getCourse(name);
+    }
+
 }

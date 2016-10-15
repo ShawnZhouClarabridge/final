@@ -1,9 +1,29 @@
 package co.edureka.controller;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class Courses {
+
+	@NotNull
+	@Size(min=1, max=100)
 	String name;
+
+	@NotNull
+	@Size(min=1, max=10)
+	@Pattern(regexp = "^[a-zA-Z0-9]+$",
+			message = "ID must be alphanumeric with no spaces")
 	String id;
+
+
+	@NotNull
+	@Min(0)
 	int price;
+
+	@NotNull
+	@Min(1)
 	int sessions;
 
 	public String getName() {
