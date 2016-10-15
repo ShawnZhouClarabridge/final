@@ -26,9 +26,9 @@ public class CourseDAO {
     }
 
     public boolean courseExists(Courses courses) {
-        SqlParameterSource param = new MapSqlParameterSource("id",courses.getId());
-        int cnt = jdbc.queryForInt(SQL_COUNT,param);
-        return cnt !=0;
+        SqlParameterSource param = new MapSqlParameterSource("id", courses.getId());
+        int cnt = jdbc.queryForInt(SQL_COUNT, param);
+        return cnt != 0;
     }
 
     public void insertCourse(Courses course) {
@@ -60,34 +60,29 @@ public class CourseDAO {
 
 
     public List<Courses> getCourses() {
-        return jdbc.query("select * from courses", new RowMapper<Courses>() {
-
-            public Courses mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Courses course = new Courses();
-
-                course.setId(rs.getString("id"));
-                course.setName(rs.getString("name"));
-                course.setPrice(rs.getInt("price"));
-                return course;
-            }
-        });
+        return jdbc.query("select * from courses",
+                new RowMapper<Courses>() {
+                    public Courses mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Courses course = new Courses();
+                        course.setId(rs.getString("id"));
+                        course.setName(rs.getString("name"));
+                        course.setPrice(rs.getInt("price"));
+                        return course;
+                    }
+                });
     }
 
     public Courses getCourse(String name) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("name", name);
-
         return (Courses) jdbc.queryForObject("select * from courses where name=:name", params,
                 new RowMapper<Courses>() {
-
                     public Courses mapRow(ResultSet rs, int rowNum)
                             throws SQLException {
                         Courses course = new Courses();
-
                         course.setId(rs.getString("id"));
                         course.setName(rs.getString("name"));
                         course.setPrice(rs.getInt("price"));
-
                         return course;
                     }
 

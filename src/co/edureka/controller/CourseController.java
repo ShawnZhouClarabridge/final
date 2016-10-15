@@ -22,17 +22,18 @@ public class CourseController {
 
     private static final Logger logger = Logger.getLogger(CourseController.class);
     private CourseService courseService;
-    private String course_update = null;
-//private static ArrayList<String> course_list=null;
+    private Courses courseToUpdate = null;
+    private ArrayList<Courses> coursesArrayList = new ArrayList<Courses>();
 
     @Autowired
     public void setCourseService(CourseService courseService) {
         this.courseService = courseService;
     }
 
+    /************************Add Course************************/
     @RequestMapping(value = "addCourse")
     public ModelAndView add() {
-        return new ModelAndView("addCourse2", "courses", new Courses()); //view name, model name and model object
+        return new ModelAndView("addCourse2", "courses", new Courses());
     }
 
     @RequestMapping(value = "subCourse", method = RequestMethod.POST, params = {"add"})
@@ -54,39 +55,46 @@ public class CourseController {
     public String cancelAdd() {
         return "home";
     }
+    /************************Add Course End************************/
 
-
+    /************************Update Course************************/
     @RequestMapping("/updateCourse")
-    public ModelAndView getCourses() {
-
-        ArrayList<Courses> courses = (ArrayList<Courses>) courseService.getCourses();
-        return new ModelAndView("updateCourse", "courses", courses);
-
+    public String getCourses(Model model) {
+        coursesArrayList = (ArrayList<Courses>) courseService.getCourses();
+        model.addAttribute("courses", new Courses());
+        model.addAttribute("coursesArray", coursesArrayList);
+        return "updateCourse";
     }
 
     @RequestMapping("/modifyCourse")
-    public ModelAndView modifyCourse(@RequestParam Map<String, String> param) {
-        course_update = param.get("course");
-        Courses course = courseService.getCourse(param.get("course"));
-        return new ModelAndView("updateCourse", "course", course);
-
+    public String modifyCourse(Model model, @RequestParam Map<String, String> param) {
+        courseToUpdate = courseService.getCourse(param.get("course"));
+        model.addAttribute("courses", courseToUpdate);
+        model.addAttribute("coursesArray", coursesArrayList);
+        return "updateCourse";
     }
-
 
     @RequestMapping("/courseUpdated")
-    public ModelAndView courseUpdated(Courses course) {
+    public String courseUpdated(Model model, @Valid Courses course, BindingResult result) {
+        if(result.hasErrors()) {
+            System.out.println("binding error");
+            return "updateCourse";
+        }
+        if (courseService.courseExists(course) && !course.getId().equals(courseToUpdate.getId())) {
+            model.addAttribute("msg", String.format("Course with ID %s already exist", course.getId()));
+            return "updateCourse";
+        }
 
-        courseService.updateCourse(course, course_update);
+        courseService.updateCourse(course, courseToUpdate.getName());
         String message = course.getName() + " course has been updated successfully";
-        return new ModelAndView("courseUpdated", "model", message);
+        model.addAttribute("model",message);
+        return "courseUpdated";
     }
 
-
+    /************************Update Course End************************/
     @RequestMapping("/deleteCourse")
     public ModelAndView deleteCourse() {
-
         ArrayList<Courses> courses = (ArrayList<Courses>) courseService.getCourses();
-
         return new ModelAndView("deleteCourse", "model", courses);
     }
 
