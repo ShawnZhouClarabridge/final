@@ -24,9 +24,7 @@ public class CourseService {
 
 
     public void insertCourse(Courses course) {
-
         courseDao.insertCourse(course);
-
     }
 
     public void deleteCourse(String courseName) {

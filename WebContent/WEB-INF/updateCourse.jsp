@@ -50,11 +50,6 @@
                         <form:input path="price" name="price" type="int" class="textbox"/>
                         <form:errors style="color: red" path="price" cssClass="error"></form:errors>
                     </div>
-                    <div class="divv">
-                        <form:label path="sessions">Course Session</form:label>
-                        <form:input path="sessions" name="sessions" type="int" class="textbox"/>
-                        <form:errors style="color: red" path="sessions" cssClass="error"></form:errors>
-                    </div>
                     <br/>
                     <div align="center" class="divv">
                         <input type="submit" name="add" value="Submit" class="btn"/>

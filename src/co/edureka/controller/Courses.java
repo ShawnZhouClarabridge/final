@@ -22,8 +22,6 @@ public class Courses {
 	@Min(0)
 	int price;
 
-	@NotNull
-	@Min(1)
 	int sessions;
 
 	public String getName() {
