@@ -10,6 +10,9 @@
     <context:component-scan base-package="co.edureka.service">
     </context:component-scan>
 
-
-
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--25 mb max-->
+        <property name="maxUploadSize" value="26214400"/>
+    </bean>
 </beans>

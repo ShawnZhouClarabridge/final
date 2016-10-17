@@ -7,10 +7,13 @@ public class Trainer {
 	String email;
 	long phone;
 	String address;
-	
-	
+
+
+	public Trainer() {
+	}
+
 	public Trainer(String name, int experience, String email, long phone,
-			String address) {
+				   String address) {
 		super();
 		this.name = name;
 		this.experience = experience;
