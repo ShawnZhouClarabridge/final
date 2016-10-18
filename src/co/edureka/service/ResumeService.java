@@ -5,6 +5,8 @@ import co.edureka.dao.ResumeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class ResumeService {
@@ -17,6 +19,10 @@ public class ResumeService {
 
     public void insertResume(Resume resume)
     {
-        resumeDAO.inserResume(resume);
+        resumeDAO.insertResume(resume);
+    }
+
+    public List<Resume> getResumes() {
+        return resumeDAO.getResumes();
     }
 }

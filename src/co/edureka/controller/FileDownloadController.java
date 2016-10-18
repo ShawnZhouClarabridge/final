@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class FileDownloadController {
 
 	private static final String INTERNAL_FILE = "test.pdf";
-	private static final String EXTERNAL_FILE_PATH = "/home/shawn.zhou/tmpUpload/tmpFiles/test.sql";
+	private static final String EXTERNAL_FILE_PATH = "/home/shawn.zhou/tmpUpload/test.pdf";
 
 	/*
 	 * Download a file from - inside project, located in resources folder. -
