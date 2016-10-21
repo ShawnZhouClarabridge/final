@@ -1,6 +1,8 @@
 package co.edureka.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -24,6 +26,7 @@ public class CourseController {
     private CourseService courseService;
     private Courses courseToUpdate = null;
     private ArrayList<Courses> coursesArrayList = new ArrayList<Courses>();
+    private final String[] fields = {"id", "name", "price", "list all"};
 
     @Autowired
     public void setCourseService(CourseService courseService) {
@@ -47,7 +50,7 @@ public class CourseController {
         }
         courseService.insertCourse(course);
         String message = "Course Inserted Successfully";
-        model.addAttribute("message",message);
+        model.addAttribute("message", message);
         return "courseAdded";
     }
 
@@ -68,7 +71,7 @@ public class CourseController {
 
     @RequestMapping("/modifyCourse")
     public String modifyCourse(Model model, @RequestParam Map<String, String> param) {
-        courseToUpdate = courseService.getCourse(param.get("course"));
+        courseToUpdate = courseService.getCourseById(param.get("course"));
         model.addAttribute("courses", courseToUpdate);
         model.addAttribute("coursesArray", coursesArrayList);
         return "updateCourse";
@@ -76,7 +79,7 @@ public class CourseController {
 
     @RequestMapping("/courseUpdated")
     public String courseUpdated(Model model, @Valid Courses course, BindingResult result) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             System.out.println("binding error");
             return "updateCourse";
         }
@@ -85,13 +88,15 @@ public class CourseController {
             return "updateCourse";
         }
 
-        courseService.updateCourse(course, courseToUpdate.getName());
+        courseService.updateCourse(course, courseToUpdate.getId());
         String message = course.getName() + " course has been updated successfully";
-        model.addAttribute("model",message);
+        model.addAttribute("model", message);
         return "courseUpdated";
     }
 
     /************************Update Course End************************/
+
+    /************************Delete Course************************/
     @RequestMapping("/deleteCourse")
     public ModelAndView deleteCourse() {
         ArrayList<Courses> courses = (ArrayList<Courses>) courseService.getCourses();
@@ -103,9 +108,61 @@ public class CourseController {
     public ModelAndView courseDeletion(@RequestParam Map<String, String> param) {
         System.out.println("Trying to delete " + param.get("course"));
         courseService.deleteCourse(param.get("course"));
-        String message = param.get("course") + " Course have been deleted from database successfully ";
+        String message = " Course have been deleted from database successfully ";
         return new ModelAndView("courseDeletion", "model", message);
     }
+    /************************Delete Course End************************/
 
+    /************************Search Course************************/
+    @RequestMapping("searchCourse")
+    public String searchCourses(Model model) {
+        model.addAttribute("filedsArray", fields);
+        return "searchCourses";
+    }
+
+
+    @RequestMapping("searchCoursesResult")
+    public String searchCoursesResult(Model model,
+                                      @RequestParam("searchBy") String searchBy,
+                                      @RequestParam("searchValue") String searchValue) {
+        model.addAttribute("filedsArray", fields);
+        if (searchBy.equals("--- Search By ---")) {
+            model.addAttribute("msg", "Must select a valid field to search by");
+            return "searchCourses";
+        }
+
+        if (searchValue.isEmpty() && !searchBy.equals("list all")) {
+            model.addAttribute("msg", "Must input a value to search");
+            return "searchCourses";
+        }
+
+        List<Courses> results = new LinkedList<Courses>();
+
+        if (searchBy.equals("price")) {
+            try {
+                Integer integerVal = Integer.parseInt(searchValue);
+                results = courseService.getCourseByPrice(integerVal);
+            } catch (NumberFormatException e) {
+                String msg = "Input value for field:\""
+                        + searchBy
+                        + "\" must be Integer";
+                model.addAttribute("filedsArray", fields);
+                return "searchCourses";
+            }
+        } else if (searchBy.equals("id")) {
+            Courses course = courseService.getCourseById(searchValue);
+            if (course != null)
+                results.add(course);
+        } else if (searchBy.equals("name")){
+            results = courseService.getCourseByName(searchValue);
+        } else if (searchBy.equals("list all")) {
+            results = courseService.getCourses();
+        } else {
+            System.out.println("error!");
+        }
+        model.addAttribute("result", results);
+        return "searchCourses";
+    }
+    /************************Search Course************************/
 
 }

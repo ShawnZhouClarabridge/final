@@ -13,7 +13,7 @@
 <form action="courseDeletion" method="post">
   <h1>Select Course : </h1>       <select name="course">
             <c:forEach var="item" items="${model}">
-             <option value='${item.name}'>${item.name}</option>
+             <option value='${item.id}'>${item.name}</option>
             </c:forEach>
           </select>
           <input type="submit" value="Delete"/>

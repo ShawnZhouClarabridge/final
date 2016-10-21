@@ -16,7 +16,7 @@
         Select Course <select name="course">
         <option>--- Select Course ---</option>
         <c:forEach var="item" items="${coursesArray}">
-            <option value='${item.name}'>${item.name}</option>
+            <option value='${item.id}'>${item.name}</option>
         </c:forEach>
     </select>
         <input type="submit" value="Update"/>

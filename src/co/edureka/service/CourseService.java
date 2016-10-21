@@ -27,20 +27,29 @@ public class CourseService {
         courseDao.insertCourse(course);
     }
 
-    public void deleteCourse(String courseName) {
-        courseDao.deleteCourse(courseName);
+    public void deleteCourse(String id) {
+        courseDao.deleteCourse(id);
     }
 
-    public void updateCourse(Courses course, String courseName) {
-        courseDao.updateCourse(course, courseName);
+    public void updateCourse(Courses course, String id) {
+        courseDao.updateCourse(course, id);
     }
 
     public List<Courses> getCourses() {
         return courseDao.getCourses();
     }
 
-    public Courses getCourse(String name) {
-        return courseDao.getCourse(name);
+    public Courses getCourseById(String id) {
+        return courseDao.getCourseById(id);
     }
+
+    public List<Courses> getCourseByName(String name) {
+        return courseDao.getCoursebyName(name);
+    }
+
+    public List<Courses> getCourseByPrice(Integer price) {
+        return courseDao.getCourseByPrice(price);
+    }
+
 
 }
