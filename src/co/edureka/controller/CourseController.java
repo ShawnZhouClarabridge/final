@@ -7,6 +7,10 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -49,6 +53,7 @@ public class CourseController {
             return "addCourse2";
         }
         courseService.insertCourse(course);
+        logger.info(CheckUserAuth.checkUserAndAuth() + " added course:" + course.toString());
         String message = "Course Inserted Successfully";
         model.addAttribute("message", message);
         return "courseAdded";
@@ -80,7 +85,6 @@ public class CourseController {
     @RequestMapping("/courseUpdated")
     public String courseUpdated(Model model, @Valid Courses course, BindingResult result) {
         if (result.hasErrors()) {
-            System.out.println("binding error");
             return "updateCourse";
         }
         if (courseService.courseExists(course) && !course.getId().equals(courseToUpdate.getId())) {
@@ -89,6 +93,7 @@ public class CourseController {
         }
 
         courseService.updateCourse(course, courseToUpdate.getId());
+        logger.info(CheckUserAuth.checkUserAndAuth() + " update course: \n" + courseToUpdate.toString() + "\n" + course.toString());
         String message = course.getName() + " course has been updated successfully";
         model.addAttribute("model", message);
         return "courseUpdated";
@@ -106,8 +111,8 @@ public class CourseController {
 
     @RequestMapping("courseDeletion")
     public ModelAndView courseDeletion(@RequestParam Map<String, String> param) {
-        System.out.println("Trying to delete " + param.get("course"));
         courseService.deleteCourse(param.get("course"));
+        logger.info(CheckUserAuth.checkUserAndAuth() + "deleted course id: " + param.get("course"));
         String message = " Course have been deleted from database successfully ";
         return new ModelAndView("courseDeletion", "model", message);
     }
@@ -139,6 +144,7 @@ public class CourseController {
         List<Courses> results = new LinkedList<Courses>();
 
         if (searchBy.equals("price")) {
+            logger.info(CheckUserAuth.checkUserAndAuth() + "search course by price: " + searchValue);
             try {
                 Integer integerVal = Integer.parseInt(searchValue);
                 results = courseService.getCourseByPrice(integerVal);
@@ -150,16 +156,20 @@ public class CourseController {
                 return "searchCourses";
             }
         } else if (searchBy.equals("id")) {
+            logger.info(CheckUserAuth.checkUserAndAuth() + "search course by id: " + searchValue);
             Courses course = courseService.getCourseById(searchValue);
             if (course != null)
                 results.add(course);
         } else if (searchBy.equals("name")){
+            logger.info(CheckUserAuth.checkUserAndAuth() + "search course by name: " + searchValue);
             results = courseService.getCourseByName(searchValue);
         } else if (searchBy.equals("list all")) {
+            logger.info(CheckUserAuth.checkUserAndAuth() + "search course by all");
             results = courseService.getCourses();
         } else {
-            System.out.println("error!");
+            logger.error(CheckUserAuth.checkUserAndAuth() + "search course by invalid field");
         }
+        logger.info("Search courses results: " + results);
         model.addAttribute("result", results);
         return "searchCourses";
     }

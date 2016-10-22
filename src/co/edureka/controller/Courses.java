@@ -75,4 +75,14 @@ public class Courses {
 	public void setSessions(int sessions) {
 		this.sessions = sessions;
 	}
+
+	@Override
+	public String toString() {
+		return "Courses{" +
+				"name='" + name + '\'' +
+				", id='" + id + '\'' +
+				", price=" + price +
+				", sessions=" + sessions +
+				'}';
+	}
 }
