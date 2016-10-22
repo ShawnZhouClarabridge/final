@@ -105,20 +105,21 @@ public class CourseDAO {
     }
 
     public List<Courses> getCoursebyName(String name) {
+        List<Courses> ret = new LinkedList<Courses>();
         String sql = "select * from courses where name = :name";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("name", name);
         logger.info(sql);
         try {
-            return jdbc.query(sql, params, new CourseMapper());
+            ret = jdbc.query(sql, params, new CourseMapper());
         } catch (DataAccessException e) {
             logger.error(e.getMessage());
-        } finally {
-            return new LinkedList<Courses>();
         }
+        return ret;
     }
 
     public List<Courses> getCourseByPrice(Integer price) {
+        List<Courses> ret = new LinkedList<Courses>();
         String sql = "select * from courses where price = :price";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("price", price);
@@ -127,9 +128,8 @@ public class CourseDAO {
             return jdbc.query(sql, params, new CourseMapper());
         } catch (DataAccessException e) {
             logger.error(e.getMessage());
-        } finally {
-            return new LinkedList<Courses>();
         }
+        return ret;
     }
 
     private class CourseMapper implements RowMapper<Courses> {

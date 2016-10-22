@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.*;
 
 import co.edureka.service.TrainerService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class TrainerController {
+    private static final Logger logger = Logger.getLogger(TrainerController.class);
     public static ArrayList<String> list;
     public static String toUpdate = null;
     private final String[] fields = {"name", "experience", "list all"};
@@ -32,7 +34,7 @@ public class TrainerController {
 
     @RequestMapping("/subTrainer")
     public ModelAndView addTrainer(@RequestParam Map<String, String> param) {
-        System.out.println("Ya its working");
+        logger.info("Ya its working");
         String name = param.get("name");
         String exp = param.get("exp");
 
@@ -47,18 +49,18 @@ public class TrainerController {
         try {
             Statement st = con.createStatement();
             String sql = "insert into trainers(name,email,phone,experience,address) values ('" + name + "','" + email + "','" + phone + "','" + exp + "','" + address + "' )";
-            System.out.println(sql);
+            logger.info(sql);
             i = st.executeUpdate(sql);
 
             if (i != 0) {
-                System.out.println("Inserted Successful");
+                logger.info("Inserted Successful");
                 message = name + " have been added as trainer successfully.";
             } else {
-                System.out.println("Insertion failed");
+                logger.info("Insertion failed");
                 message = "Error occured while inserting Trainer record";
             }
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
 
@@ -78,7 +80,7 @@ public class TrainerController {
         try {
             Statement st = con.createStatement();
             String sql = "select * from trainers";
-            System.out.println(sql);
+            logger.info(sql);
             set = st.executeQuery(sql);
 
             while (set.next()) {
@@ -86,10 +88,10 @@ public class TrainerController {
                 trainers.add(trainer);
             }
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
-        System.out.println(trainers);
+        logger.info(trainers);
         return new ModelAndView("deleteTrainer", "model", trainers);
     }
 
@@ -97,14 +99,14 @@ public class TrainerController {
     public ModelAndView courseDeletion(@RequestParam Map<String, String> param) {
         String message = null;
         String delete = param.get("trainer");
-        System.out.println("Trainer to be deleted " + delete);
+        logger.info("Trainer to be deleted " + delete);
         Connection con = DBConnection.getConnection();
         int i = 0;
 
         try {
             Statement st = con.createStatement();
             String sql = "delete from trainers where name='" + delete + "'   ";
-            System.out.println(sql);
+            logger.info(sql);
             i = st.executeUpdate(sql);
 
             if (i != 0) {
@@ -113,7 +115,7 @@ public class TrainerController {
                 message = "Error Occurred while deleting " + delete;
             }
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
 
@@ -136,7 +138,7 @@ public class TrainerController {
         try {
             Statement st = con.createStatement();
             String sql = "select * from trainers";
-            System.out.println(sql);
+            logger.info(sql);
             set = st.executeQuery(sql);
 
             while (set.next()) {
@@ -145,10 +147,10 @@ public class TrainerController {
             }
             list = trainers;
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
-        System.out.println(trainers);
+        logger.info(trainers);
         model.put("trainers", trainers);
         model.put("email", email);
         model.put("exp", exp);
@@ -172,7 +174,7 @@ public class TrainerController {
         try {
             Statement st = con.createStatement();
             String sql = "select * from trainers where name='" + trainer + "' ";
-            System.out.println(sql);
+            logger.info(sql);
             set = st.executeQuery(sql);
 
             while (set.next()) {
@@ -183,10 +185,10 @@ public class TrainerController {
 
             }
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
-        System.out.println(courses);
+        logger.info(courses);
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("exp", exp);
         model.put("email", email);
@@ -214,17 +216,17 @@ public class TrainerController {
         try {
             Statement st = con.createStatement();
             String sql = "update trainers set name='" + name + "' ,experience='" + exper + "',email='" + email + "',phone='" + contact + "' where name='" + TrainerController.toUpdate + "' ";
-            System.out.println(sql);
+            logger.info(sql);
             i = st.executeUpdate(sql);
 
             if (i != 0) {
                 message = "Trainer details have been updated successfully";
             }
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
-        System.out.println(courses);
+        logger.info(courses);
 
 
         return new ModelAndView("trainerUpdated", "model", message);
@@ -253,8 +255,10 @@ public class TrainerController {
 
         List<Trainer> results = new LinkedList<Trainer>();
         if (searchBy.equals("name")) {
+            logger.info(CheckUserAuth.checkUserAndAuth() + "search trainer by name: " + searchValue);
             results = trainerService.getTrainersByName(searchValue);
         } else if (searchBy.equals("experience")) {
+            logger.info(CheckUserAuth.checkUserAndAuth() + "search trainer by experience: " + searchValue);
             try {
                 Integer integerVal = Integer.parseInt(searchValue);
                 results = trainerService.getTrainersByEx(integerVal);
@@ -266,11 +270,12 @@ public class TrainerController {
                 return "searchCourses";
             }
         } else if (searchBy.equals("list all")) {
+            logger.info(CheckUserAuth.checkUserAndAuth() + "search course by all");
             results = trainerService.getTrainers();
         } else {
-            System.out.println("error!");
+            logger.error("search trainer by invalid filed");
         }
-
+        logger.info("Search trainers results: " + results);
         model.addAttribute("data", results);
         return "searchTrainers";
     }

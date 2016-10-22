@@ -2,6 +2,7 @@ package co.edureka.dao;
 
 
 import co.edureka.controller.Trainer;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component("trainerDAO")
 public class TrainerDAO {
+    private static final Logger logger = Logger.getLogger(CourseDAO.class);
     private NamedParameterJdbcTemplate jdbc;
 
     @Autowired
@@ -24,28 +27,43 @@ public class TrainerDAO {
     }
 
     public List<Trainer> getTrainers() {
+        List<Trainer> ret = new LinkedList<Trainer>();
         String sql = "select * from trainers";
-        return jdbc.query(sql,new TrainerMapper());
+        logger.info(sql);
+        try {
+            ret =  jdbc.query(sql, new TrainerMapper());
+        } catch (DataAccessException e) {
+            logger.error(e.getMessage());
+        }
+        return ret;
     }
 
     public List<Trainer> getTrainersByName(String name) {
-        List<Trainer> ret = null;
+        List<Trainer> ret = new LinkedList<Trainer>();
         String sql = "select * from trainers where name = :name";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("name", name);
+        logger.info(sql);
         try {
             ret = jdbc.query(sql, params, new TrainerMapper());
         } catch (DataAccessException e) {
-            System.out.println(e.getMessage());
+            logger.info(e.getMessage());
         }
         return ret;
     }
 
     public List<Trainer> getTrainersByEx(Integer ex) {
+        List<Trainer> ret = new LinkedList<Trainer>();
         String sql = "select * from trainers where experience = :ex";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ex", ex);
-        return jdbc.query(sql,params,new TrainerMapper());
+        logger.info(sql);
+        try {
+            ret = jdbc.query(sql, params, new TrainerMapper());
+        } catch (DataAccessException e) {
+            logger.error(e.getMessage());
+        }
+        return ret;
     }
 
     private class TrainerMapper implements RowMapper<Trainer> {

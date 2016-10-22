@@ -52,4 +52,14 @@ public class Trainer {
 		this.address = address;
 	}
 
+	@Override
+	public String toString() {
+		return "Trainer{" +
+				"name='" + name + '\'' +
+				", experience=" + experience +
+				", email='" + email + '\'' +
+				", phone=" + phone +
+				", address='" + address + '\'' +
+				'}';
+	}
 }
