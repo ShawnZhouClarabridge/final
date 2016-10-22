@@ -3,11 +3,12 @@ package co.edureka.controller;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import co.edureka.service.TrainerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,6 +17,13 @@ import org.springframework.web.servlet.ModelAndView;
 public class TrainerController {
     public static ArrayList<String> list;
     public static String toUpdate = null;
+    private final String[] fields = {"name", "experience", "list all"};
+    private TrainerService trainerService;
+
+    @Autowired
+    public void setTrainerService(TrainerService trainerService) {
+        this.trainerService = trainerService;
+    }
 
     @RequestMapping("/addTrainer")
     public String newTrainer() {
@@ -222,5 +230,48 @@ public class TrainerController {
         return new ModelAndView("trainerUpdated", "model", message);
     }
 
+    @RequestMapping("searchTrainer")
+    public String searchTrainer(Model model) {
+        model.addAttribute("filedsArray", fields);
+        return "searchTrainers";
+    }
 
+    @RequestMapping("searchTrainersResult")
+    public String searchCoursesResult(Model model,
+                                      @RequestParam("searchBy") String searchBy,
+                                      @RequestParam("searchValue") String searchValue) {
+        model.addAttribute("filedsArray", fields);
+        if (searchBy.equals("--- Search By ---")) {
+            model.addAttribute("msg", "Must select a valid field to search by");
+            return "searchTrainers";
+        }
+
+        if (searchValue.isEmpty() && !searchBy.equals("list all")) {
+            model.addAttribute("msg", "Must input a value to search");
+            return "searchTrainers";
+        }
+
+        List<Trainer> results = new LinkedList<Trainer>();
+        if (searchBy.equals("name")) {
+            results = trainerService.getTrainersByName(searchValue);
+        } else if (searchBy.equals("experience")) {
+            try {
+                Integer integerVal = Integer.parseInt(searchValue);
+                results = trainerService.getTrainersByEx(integerVal);
+            } catch (NumberFormatException e) {
+                String msg = "Input value for field:\""
+                        + searchBy
+                        + "\" must be Integer";
+                model.addAttribute("msg", msg);
+                return "searchCourses";
+            }
+        } else if (searchBy.equals("list all")) {
+            results = trainerService.getTrainers();
+        } else {
+            System.out.println("error!");
+        }
+
+        model.addAttribute("data", results);
+        return "searchTrainers";
+    }
 }

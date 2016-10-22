@@ -146,7 +146,7 @@ public class CourseController {
                 String msg = "Input value for field:\""
                         + searchBy
                         + "\" must be Integer";
-                model.addAttribute("filedsArray", fields);
+                model.addAttribute("msg", msg);
                 return "searchCourses";
             }
         } else if (searchBy.equals("id")) {

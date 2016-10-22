@@ -20,4 +20,12 @@ public class TrainerService {
     public List<Trainer> getTrainers() {
         return trainerDAO.getTrainers();
     }
+
+    public List<Trainer> getTrainersByName(String name) {
+        return trainerDAO.getTrainersByName(name);
+    }
+
+    public List<Trainer> getTrainersByEx(Integer ex) {
+        return trainerDAO.getTrainersByEx(ex);
+    }
 }
