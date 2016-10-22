@@ -25,4 +25,12 @@ public class ResumeService {
     public List<Resume> getResumes() {
         return resumeDAO.getResumes();
     }
+
+    public void deleteResume(String trainer, String resume) {
+        resumeDAO.deleteResume(trainer,resume);
+    }
+
+    public List<Resume> getResumesByTrainer(String t) {
+        return resumeDAO.getResumesByTrainer(t);
+    }
 }

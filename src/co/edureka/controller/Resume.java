@@ -27,4 +27,12 @@ public class Resume {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    @Override
+    public String toString() {
+        return "Resume{" +
+                "trainerName='" + trainerName + '\'' +
+                ", fileName='" + fileName + '\'' +
+                '}';
+    }
 }
