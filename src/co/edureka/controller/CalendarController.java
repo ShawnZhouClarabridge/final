@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class CalendarController {
+    private static final Logger logger = Logger.getLogger(CalendarController.class);
 
     @Autowired
     private JavaMailSender mailSender;
@@ -35,16 +37,16 @@ public class CalendarController {
         try {
             Statement st = con.createStatement();
             String sql = "select * from courses";
-            System.out.println(sql);
+            logger.info(sql);
             set = st.executeQuery(sql);
             while (set.next()) {
                 String c = set.getString("name");
-                System.out.println(c);
+                logger.info(c);
                 list.add(c);
             }
 
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
 
@@ -56,19 +58,19 @@ public class CalendarController {
     public ModelAndView addCalendar(@RequestParam Map<String, String> param) {
 
 
-        System.out.println("Ya its working");
+        logger.info("Ya its working");
         String course = param.get("course");
         String startdate = param.get("startdate");
         String enddate = param.get("enddate");
         String time = param.get("sessions");
         int duration = Integer.parseInt(time);
-        System.out.println(startdate);
-        System.out.println(enddate);
+        logger.info(startdate);
+        logger.info(enddate);
 
         startdate = convertDate(startdate);
         enddate = convertDate(enddate);
 
-        System.out.println(startdate + "   " + enddate);
+        logger.info(startdate + "   " + enddate);
 
         String message = null;
         Connection con = DBConnection.getConnection();
@@ -77,22 +79,22 @@ public class CalendarController {
         try {
             Statement st = con.createStatement();
             String sql = "insert into calendar(course,start_date,end_date,sessions,trainer) values ('" + course + "','" + startdate + "','" + enddate + "','" + duration + "',null )";
-            System.out.println(sql);
+            logger.info(sql);
             i = st.executeUpdate(sql);
 
             if (i != 0) {
-                System.out.println("calendar Inserted Successful");
+                logger.info("calendar Inserted Successful");
                 message = "Course have been added into calendar successfully";
             } else {
-                System.out.println("Insertion failed");
+                logger.info("Insertion failed");
                 message = "Error occured while adding course into calendar";
             }
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
         }
 
 
-        System.out.println(message);
+        logger.info(message);
         return new ModelAndView("calendarResult", "message", message);
 
     }
@@ -109,42 +111,42 @@ public class CalendarController {
         try {
             Statement st = con.createStatement();
             String sql = "select * from calendar where trainer is null";
-            System.out.println(sql);
+            logger.info(sql);
             set1 = st.executeQuery(sql);
             while (set1.next()) {
                 String col1 = set1.getString(1);
                 String col2 = set1.getString(2);
                 String col3 = set1.getString(3);
                 int col4 = set1.getInt(4);
-                System.out.println(col1 + col2 + col3 + col4);
+                logger.info(col1 + col2 + col3 + col4);
                 Course c = new Course(col1, col2, col3, col4);
-                System.out.println(c);
+                logger.info(c);
                 course_list.add(c);
             }
 
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
-        System.out.println("Number of courses " + course_list.size());
+        logger.info("Number of courses " + course_list.size());
 
         ResultSet set2 = null;
         try {
             Connection con1 = DBConnection.getConnection();
             Statement st = con1.createStatement();
             String sql = "select * from trainers";
-            System.out.println(sql);
+            logger.info(sql);
             set2 = st.executeQuery(sql);
             while (set2.next()) {
                 String col1 = set2.getString(1);
 
-                System.out.println(col1);
+                logger.info(col1);
 
                 trainers.add(col1);
             }
 
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
 
@@ -153,14 +155,14 @@ public class CalendarController {
         ArrayList<String> coursenames = new ArrayList<String>();
         for (Course cr : course_list) {
             String st = cr.getName();
-            System.out.println(">>>>> " + st + "  <<<<<");
+            logger.info(">>>>> " + st + "  <<<<<");
             coursenames.add(st);
         }
         model.put("course_list", course_list);
         model.put("trainers", trainers);
         model.put("courses", coursenames);
 
-        System.out.println(trainers);
+        logger.info(trainers);
         return new ModelAndView("assignment2", "model", model);
 
 
@@ -168,18 +170,18 @@ public class CalendarController {
 
     @RequestMapping("batchAssign")
     public ModelAndView callBatch() {
-        System.out.println("In to batch Assign");
+        logger.info("In to batch Assign");
         ArrayList<String> batches = new ArrayList<String>();
         String sql = " select distinct course from calendar where trainer is null    ";
         Connection con = DBConnection.getConnection();
         ResultSet re = null;
         try {
             Statement st = con.createStatement();
-            System.out.println(sql);
+            logger.info(sql);
             re = st.executeQuery(sql);
             while (re.next()) {
                 batches.add(re.getString(1));
-                System.out.println(re.getString(1));
+                logger.info(re.getString(1));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -193,7 +195,7 @@ public class CalendarController {
 
     @RequestMapping("batAssign")
     public ModelAndView batchAssign(HttpServletRequest req, HttpServletResponse res) {
-        System.out.println("Got it inside " + req.getParameter("course"));
+        logger.info("Got it inside " + req.getParameter("course"));
         CalendarController.batch_na = req.getParameter("course");
 
         ArrayList<Course> course_list = new ArrayList<Course>(10);
@@ -204,42 +206,42 @@ public class CalendarController {
         try {
             Statement st = con.createStatement();
             String sql = "select * from calendar where course='" + CalendarController.batch_na + "' and trainer is null";
-            System.out.println(sql);
+            logger.info(sql);
             set1 = st.executeQuery(sql);
             while (set1.next()) {
                 String col1 = set1.getString(1);
                 String col2 = set1.getString(2);
                 String col3 = set1.getString(3);
                 int col4 = set1.getInt(4);
-                System.out.println(col1 + col2 + col3 + col4);
+                logger.info(col1 + col2 + col3 + col4);
                 Course c = new Course(col1, col2, col3, col4);
-                System.out.println(c);
+                logger.info(c);
                 course_list.add(c);
             }
 
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
-        System.out.println("Number of courses " + course_list.size());
+        logger.info("Number of courses " + course_list.size());
 
         ResultSet set2 = null;
         try {
             Connection con1 = DBConnection.getConnection();
             Statement st = con1.createStatement();
             String sql = "select * from trainers";
-            System.out.println(sql);
+            logger.info(sql);
             set2 = st.executeQuery(sql);
             while (set2.next()) {
                 String col1 = set2.getString(1);
 
-                System.out.println(col1);
+                logger.info(col1);
 
                 trainers.add(col1);
             }
 
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
 
@@ -248,14 +250,14 @@ public class CalendarController {
         ArrayList<String> coursenames = new ArrayList<String>();
         for (Course cr : course_list) {
             String st = cr.getName();
-            System.out.println(">>>>> " + st + "  <<<<<");
+            logger.info(">>>>> " + st + "  <<<<<");
             coursenames.add(st);
         }
         model.put("course_list", course_list);
         model.put("trainers", trainers);
         model.put("courses", coursenames);
         model.put("batches", noTrainer);
-        System.out.println(trainers);
+        logger.info(trainers);
 
         return new ModelAndView("selectBatch", "model", model);
     }
@@ -279,7 +281,7 @@ public class CalendarController {
         try {
             Statement st = con.createStatement();
 
-            System.out.println(sql);
+            logger.info(sql);
             i = st.executeUpdate(sql);
             if (i != 0) {
                 share = trainer + " have been assigned the course successfully and an email have been sent ";
@@ -289,7 +291,7 @@ public class CalendarController {
             String trainer_email = null;
             while (rs.next()) {
                 trainer_email = rs.getString(3);
-                System.out.println("Trainers Email " + trainer_email);
+                logger.info("Trainers Email " + trainer_email);
             }
             String recipient = trainer_email;
             String subject = "New Course Assignment";
@@ -307,7 +309,7 @@ public class CalendarController {
             doSendEmail(emailData);
 
         } catch (Exception e) {
-            System.out.println("Error while checking");
+            logger.info("Error while checking");
             e.printStackTrace();
         }
 
@@ -322,9 +324,9 @@ public class CalendarController {
         String message = emailData.get("message");
 
         // prints debug info
-        System.out.println("To: " + recipientAddress);
-        System.out.println("Subject: " + subject);
-        System.out.println("Message: " + message);
+        logger.info("To: " + recipientAddress);
+        logger.info("Subject: " + subject);
+        logger.info("Message: " + message);
 
         // creates a simple e-mail object
         SimpleMailMessage email = new SimpleMailMessage();
@@ -340,7 +342,7 @@ public class CalendarController {
         String month = parts[0];
         String day = parts[1];
         String year = parts[2];
-        System.out.println(year + "-" + month + "-" + day);
+        logger.info(year + "-" + month + "-" + day);
         return year + "-" + month + "-" + day;
     }
 }

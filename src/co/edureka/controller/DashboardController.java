@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class DashboardController {
+	private static final Logger logger = Logger.getLogger(DashboardController.class);
 	
 	@RequestMapping("dashboard")
 	public ModelAndView dashboard(){
@@ -26,7 +28,7 @@ public class DashboardController {
         try{
         	Statement st=con.createStatement();
         	String courses_sql="select * from courses";
-        	System.out.println(courses_sql);
+        	logger.info(courses_sql);
         	set1=st.executeQuery(courses_sql);
         	
         	while(set1.next()){
@@ -43,7 +45,7 @@ public class DashboardController {
 		 try{
 	        	Statement st2=con.createStatement();
 	        	String trainers_sql="select * from trainers";
-	        	System.out.println(trainers_sql);
+	        	logger.info(trainers_sql);
 	        	set2=st2.executeQuery(trainers_sql);
 	        	
 	        	while(set2.next()){
@@ -61,7 +63,7 @@ public class DashboardController {
 			 try{
 		        	Statement st2=con.createStatement();
 		        	String sql3="select course,start_date,end_date,sessions from calendar where trainer is null";
-		        	System.out.println(sql3);
+		        	logger.info(sql3);
 		        	set3=st2.executeQuery(sql3);
 		        	
 		        	while(set3.next()){
@@ -82,7 +84,7 @@ public class DashboardController {
 			 try{
 		        	Statement st4=con.createStatement();
 		        	String sql4="select course,start_date,end_date,sessions from calendar where trainer is not null";
-		        	System.out.println(sql4);
+		        	logger.info(sql4);
 		        	set4=st4.executeQuery(sql4);
 		        	
 		        	while(set4.next()){
@@ -94,7 +96,7 @@ public class DashboardController {
 		        		Course course=new Course(courseName,start_date,end_date,sessions);
 		        		assignedCourses.add(course);
 		        	}
-		        	System.out.println("Courses are assigned");
+		        	logger.info("Courses are assigned");
 		        }catch(Exception e){e.printStackTrace();}
 		      data.put("assignedCourses",assignedCourses);
 			 
