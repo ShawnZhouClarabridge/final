@@ -16,6 +16,14 @@ CREATE TABLE users
      CONSTRAINT users_pkey PRIMARY KEY (username)
   );
 
+CREATE TABLE users
+(
+  username character varying(20) NOT NULL,
+  password character varying(24) NOT NULL,
+  email character varying(128) NOT NULL,
+  enabled boolean NOT NULL DEFAULT true
+)
+
 CREATE TABLE calendar
 (
   course character varying(100),

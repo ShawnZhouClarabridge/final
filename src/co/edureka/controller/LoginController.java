@@ -8,13 +8,18 @@ import java.io.OutputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
+import co.edureka.service.UserService;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,11 +32,18 @@ public class LoginController {
 
     private static final int BUFFER_SIZE = 4096;
     private String filePath = "/logs/server.log";
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     // first page is to login ?
     @RequestMapping("/")
-    public String firstScreen() {
+    public String firstScreen(Model model) {
         logger.debug("Inside firstScreen Method");
+        model.addAttribute("user", new User());
         return "login";
     }
 
@@ -50,6 +62,7 @@ public class LoginController {
             model.addObject("msg", "You've been logged out successfully.");
         }
         model.setViewName("login");
+        model.addObject("user", new User());
         return model;
     }
 
@@ -74,6 +87,36 @@ public class LoginController {
     public String homeScreen() {
         return "home";
     }
+
+    // sign up
+    @RequestMapping(value = "signUp")
+    public String signUp(Model model, @Valid User user, BindingResult result) {
+        logger.info(user);
+        if(result.hasErrors()) {
+            model.addAttribute("user", user);
+            return "login";
+        }
+
+        if(userService.usedName(user.getUsername())) {
+            model.addAttribute("user", user);
+            model.addAttribute("msgS", "user name has been used");
+            return "login";
+        }
+
+        if(userService.usedEmail(user.getEmail())) {
+            model.addAttribute("user", user);
+            model.addAttribute("msgS", "Email has been used");
+            return "login";
+        }
+
+        userService.insertUser(user);
+        logger.info("added user:" + user);
+        String msgNice = "Course Inserted Successfully";
+        model.addAttribute("msgNice", msgNice);
+        model.addAttribute("user", new User());
+        return "login";
+    }
+
 
 
     // Why a downloaFile request here?
