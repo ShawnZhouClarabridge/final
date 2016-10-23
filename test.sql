@@ -1,20 +1,8 @@
-CREATE TABLE traineres
-  (
-     NAME       CHARACTER VARYING(20),
-     experience INT,
-     email      CHARACTER VARYING(100),
-     phone      BIGINT,
-     address    CHARACTER VARYING(100)
-  );
-
-CREATE TABLE users
-  (
-     id       INT NOT NULL,
-     username CHARACTER VARYING(20) NOT NULL,
-     password CHARACTER VARYING(24) NOT NULL,
-     enabled  BOOLEAN NOT NULL DEFAULT true,
-     CONSTRAINT users_pkey PRIMARY KEY (username)
-  );
+CREATE TABLE authorities
+(
+  username character varying(20),
+  authority character varying(120)
+);
 
 CREATE TABLE users
 (
@@ -22,7 +10,11 @@ CREATE TABLE users
   password character varying(24) NOT NULL,
   email character varying(128) NOT NULL,
   enabled boolean NOT NULL DEFAULT true
-)
+);
+
+INSERT INTO users(
+            username, password, email, enabled)
+    VALUES ('admin', 'password', 'admin@edureka.com', true);
 
 CREATE TABLE calendar
 (
@@ -31,4 +23,28 @@ CREATE TABLE calendar
   end_date date,
   sessions int,
   trainer character varying(20)
-)
+);
+
+CREATE TABLE courses
+(
+  id character varying(10),
+  name character varying(100),
+  price integer,
+  sessions integer
+);
+
+CREATE TABLE resumes
+(
+  trainer character varying(20),
+  resume character varying(100)
+);
+
+CREATE TABLE trainers
+(
+  name character varying(20),
+  experience integer,
+  email character varying(100),
+  phone bigint,
+  address character varying(100)
+);
+
